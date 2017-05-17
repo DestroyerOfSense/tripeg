@@ -8,10 +8,7 @@ from operator import add, sub
 from random import choice
 
 from tripeg.movepaths import PathFinder
-from tripeg.animations import *
-
-# 'Arrow' should be a separate subclass of 'RawPen', and probably put into
-# 'animations'.
+from tripeg.animations import Arrow
 
 class BasicGUI:
     """Base class for all GUI/graphics implementations. Includes
@@ -133,14 +130,6 @@ class TurtleGraphics(BasicGUI):
         best_move = (__class__._add_offset(best_move[0]), best_move[1])
         return best_move
 
-    def _add_artist(self):
-        """Adds artist to 'artist_dir'."""
-        artist = RawPen(self.window)
-        artist.shape("arrow")
-        artist.pen(pendown=False, shown=True, pencolor="green", speed=0,
-                   fillcolor="green", pensize=2)
-        self.artist_dir.append(artist)
-
     def _disable_all(self):
         """Disables all buttons and pegs."""
         self.undo_btn["state"] = "disabled"
@@ -156,12 +145,10 @@ class TurtleGraphics(BasicGUI):
         for peg in self.peg_dir:
             peg.moveable = True
 
-    def _delayed_callback(self, artists):
-        """Sends artist to Hades and restores GUI."""
-        for artist in artists:
-            artist.clear()
-            artist.penup()
-            artist.goto(__class__._hades)
+    def _delayed_callback(self, arrows):
+        """Banishes arrows and restores GUI."""
+        for arrow in arrows:
+            arrow.banish()
         self._restore_all()
         
     def construct(self):
@@ -170,7 +157,7 @@ class TurtleGraphics(BasicGUI):
         self.window.setworldcoordinates(*__class__._world_coords)
         self.window.bgcolor(102,51,0)
         self.peg_dir = []
-        self.artist_dir = []
+        self.arrow_dir = []
         self.graveyard = []
         self.path_finder = PathFinder()
         self._draw_board()
@@ -202,7 +189,7 @@ class TurtleGraphics(BasicGUI):
         
     def reset_(self):
         """Updates the graphics when the game is restarted."""
-        for obj in [self.window, self.peg_dir, self.artist_dir, self.graveyard]:
+        for obj in [self.window, self.peg_dir, self.arrow_dir, self.graveyard]:
             del obj
         self.canvas.destroy()
         self.canvas = Canvas(self.mainframe, width=500, height=500,
@@ -218,31 +205,31 @@ class TurtleGraphics(BasicGUI):
         for val in legal_moves.values():
             for move in val:
                 move_count += 1
-        artists_needed = move_count - len(self.artist_dir)
-        for task in range(artists_needed):
-            self._add_artist()
-        used_artists = []
-        artist_count = 0
+        arrows_needed = move_count - len(self.arrow_dir)
+        for task in range(arrows_needed):
+            self.arrow_dir.append(Arrow(self))
+        used_arrows = []
+        arrow_count = 0
         for start_peg in legal_moves:
             for move in legal_moves[start_peg]:
-                artist = self.artist_dir[artist_count]
-                artist.goto(__class__._add_offset(start_peg))
-                destination = tuple(map(add, artist.pos(), move))
-                draw_arrow(artist, destination)
-                used_artists.append(artist)
-                artist_count += 1
-        self.root.after(3000, self._delayed_callback, used_artists)
+                arrow = self.arrow_dir[arrow_count]
+                origin = __class__._add_offset(start_peg)
+                destination = tuple(map(add, origin, move))
+                arrow.draw(origin, destination)
+                used_arrows.append(arrow)
+                arrow_count += 1
+        self.root.after(3000, self._delayed_callback, used_arrows)
         
     def show_best_move(self):
         """Shows the player the best move to make next."""
         self._disable_all()
-        if not self.artist_dir:
-            self._add_artist()
-        artist = self.artist_dir[0]
-        artist.goto(self.best_move[0])
-        destination = tuple(map(add, artist.pos(), self.best_move[1]))
-        draw_arrow(artist, destination)
-        self.root.after(3000, self._delayed_callback, [artist])
+        if not self.arrow_dir:
+            self.arrow_dir.append(Arrow(self))
+        arrow = self.arrow_dir[0]
+        origin = self.best_move[0]
+        destination = tuple(map(add, origin, self.best_move[1]))
+        arrow.draw(origin, destination)
+        self.root.after(3000, self._delayed_callback, [arrow])
 
     def update_peg_moves(self):
         """Updates move list for all pegs."""
