@@ -10,6 +10,47 @@ from random import choice
 from tripeg.movepaths import PathFinder
 from tripeg.animations import Arrow
 
+class Peg(RawPen):
+    """A specialized 'RawPen' that represents a peg."""
+
+    moveable = True
+
+    def __init__(self, start_point, graphics):
+        """Initialize self. See help(type(self)) for accurate signature."""
+        self.graphics = graphics
+        self.possible_moves = []
+        super().__init__(self.graphics.canvas, "circle", _CFG["undobuffersize"],
+                         True)
+        self.pen(pendown=False, speed=0, outline=2, fillcolor="red",
+                 pencolor="black", stretchfactor=(1.25,1.25))
+        self.start_point = start_point
+        self.goto(start_point)
+        self.ondrag(self._remove)
+        self.onrelease(self._place)
+
+    def _remove(self, x, y):
+        """Removes peg from hole if it has moves."""
+        if self.possible_moves and self.moveable:
+            self.goto(x,y)
+
+    def _place(self, x, y):
+        """Places peg in peg hole if legal."""
+        if self.possible_moves:
+            target_holes = [tuple(map(add, self.start_point, move)) for move in
+                            self.possible_moves]
+            distances = [self.distance(hole) for hole in target_holes]
+            hole_distances = dict(zip(distances, target_holes))
+            nearest_hole = hole_distances[min(hole_distances)]
+            if self.distance(nearest_hole) <= 0.45:
+                self.goto(nearest_hole)
+                peg = self.graphics._subtract_offset(self.start_point)
+                move = tuple(map(sub, self.pos(), self.start_point))
+                move = tuple(map(int, move))
+                self.graphics.game.move(peg, move)
+                self.start_point = self.pos()
+            else:
+                self.goto(self.start_point)
+
 class BasicGUI:
     """Base class for all GUI/graphics implementations. Includes
     properly gridded widgets but no functionality."""
@@ -258,45 +299,4 @@ class TurtleGraphics(BasicGUI):
             self.best_move_btn["state"] = "!disabled"
         else:
             self.best_move_btn["state"] = "disabled"
-
-class Peg(RawPen):
-    """A specialized 'RawPen' that represents a peg."""
-
-    moveable = True
-
-    def __init__(self, start_point, graphics):
-        """Initialize self. See help(type(self)) for accurate signature."""
-        self.graphics = graphics
-        self.possible_moves = []
-        super().__init__(self.graphics.canvas, "circle", _CFG["undobuffersize"],
-                         True)
-        self.pen(pendown=False, speed=0, outline=2, fillcolor="red",
-                 pencolor="black", stretchfactor=(1.25,1.25))
-        self.start_point = start_point
-        self.goto(start_point)
-        self.ondrag(self._remove)
-        self.onrelease(self._place)
-
-    def _remove(self, x, y):
-        """Removes peg from hole if it has moves."""
-        if self.possible_moves and self.moveable:
-            self.goto(x,y)
-
-    def _place(self, x, y):
-        """Places peg in peg hole if legal."""
-        if self.possible_moves:
-            target_holes = [tuple(map(add, self.start_point, move)) for move in
-                            self.possible_moves]
-            distances = [self.distance(hole) for hole in target_holes]
-            hole_distances = dict(zip(distances, target_holes))
-            nearest_hole = hole_distances[min(hole_distances)]
-            if self.distance(nearest_hole) <= 0.45:
-                self.goto(nearest_hole)
-                peg = self.graphics._subtract_offset(self.start_point)
-                move = tuple(map(sub, self.pos(), self.start_point))
-                move = tuple(map(int, move))
-                self.graphics.game.move(peg, move)
-                self.start_point = self.pos()
-            else:
-                self.goto(self.start_point)
                 

@@ -84,7 +84,7 @@ class BaseGame:
         self.moves.append((peg, move))
 
     def undo(self):
-        """Undoes one or more moves."""
+        """Undoes a move."""
         peg, move = self.moves.pop()
         self.board[peg] = 1
         self.board[self._midpoint(peg, move)] = 1
