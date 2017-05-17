@@ -3,7 +3,7 @@
 import shelve
 from tkinter import *
 from tkinter import ttk
-from turtle import TurtleScreen, RawPen, _CFG, bye, Terminator
+from turtle import TurtleScreen, RawPen, _CFG
 from operator import add, sub
 from random import choice
 
