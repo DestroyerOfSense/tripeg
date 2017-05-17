@@ -2,8 +2,6 @@
 path data."""
 
 from functools import lru_cache
-from random import choice
-from time import perf_counter
 
 from tripeg.game import BaseGame
 

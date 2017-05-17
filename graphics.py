@@ -10,6 +10,9 @@ from random import choice
 from tripeg.movepaths import PathFinder
 from tripeg.animations import *
 
+# 'Arrow' should be a separate subclass of 'RawPen', and probably put into
+# 'animations'.
+
 class BasicGUI:
     """Base class for all GUI/graphics implementations. Includes
     properly gridded widgets but no functionality."""
@@ -154,7 +157,7 @@ class TurtleGraphics(BasicGUI):
             peg.moveable = True
 
     def _delayed_callback(self, artists):
-        """Sends artist to Hades."""
+        """Sends artist to Hades and restores GUI."""
         for artist in artists:
             artist.clear()
             artist.penup()
