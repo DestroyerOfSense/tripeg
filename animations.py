@@ -12,7 +12,7 @@ class Arrow(RawPen):
                          True)
         self.pen(pendown=False, speed=0, pencolor="green", fillcolor="green",
                  pensize=2)
-        self.goto(self.graphics._hades)
+        self.goto(self.graphics.HADES)
 
     def draw(self, origin, destination):
         """Draws arrow from 'origin' to 'destination'."""
@@ -26,5 +26,5 @@ class Arrow(RawPen):
         """Clears drawings and sends arrow back to Hades."""
         self.clear()
         self.penup()
-        self.goto(self.graphics._hades)
+        self.goto(self.graphics.HADES)
                

@@ -91,22 +91,22 @@ class BasicGUI:
 class TurtleGraphics(BasicGUI):
     """GUI with graphics created using 'turtle'."""
 
-    _world_coords = (-2,-2,10,10)
-    _peg_offset = (0,0.4)
-    _hades = (0,12)
+    _WORLD_COORDS = (-2,-2,10,10)
+    _PEG_OFFSET = (0,0.4)
+    HADES = (0,12)
     best_move = None
 
     @classmethod
     def _add_offset(cls, position):
         """Adds offset to peg's position coordinates."""
-        peg_pos = tuple(map(add, position, cls._peg_offset))
+        peg_pos = tuple(map(add, position, cls._PEG_OFFSET))
         peg_pos = tuple(round(i, 1) for i in peg_pos)
         return peg_pos
 
     @classmethod
     def _subtract_offset(cls, position):
         """Subtracts offset from peg's position coordinates."""
-        peg_pos = tuple(map(sub, position, cls._peg_offset))
+        peg_pos = tuple(map(sub, position, cls._PEG_OFFSET))
         peg_pos = tuple(map(int, peg_pos))
         return peg_pos
         
@@ -116,7 +116,7 @@ class TurtleGraphics(BasicGUI):
         artist = RawPen(self.window)
         # Draws grooves in wood:
         artist.pen(pendown=False, pensize=2, speed=0)
-        x1, y1, x2, y2 = __class__._world_coords
+        x1, y1, x2, y2 = __class__._WORLD_COORDS
         for y in range(y1, y2+1, 2):
             artist.goto(x1, y)
             artist.pendown()
@@ -141,7 +141,7 @@ class TurtleGraphics(BasicGUI):
             artist.circle(0.4)
             artist.end_fill()
         artist.penup()
-        artist.goto(__class__._hades)
+        artist.goto(__class__.HADES)
 
     def _place_pegs(self):
         """Places pegs."""
@@ -195,7 +195,7 @@ class TurtleGraphics(BasicGUI):
     def construct(self):
         """Constructs graphics."""
         self.window = TurtleScreen(self.canvas)
-        self.window.setworldcoordinates(*__class__._world_coords)
+        self.window.setworldcoordinates(*__class__._WORLD_COORDS)
         self.window.bgcolor(102,51,0)
         self.peg_dir = []
         self.arrow_dir = []
@@ -212,7 +212,7 @@ class TurtleGraphics(BasicGUI):
         upper_bound = (midpoint[0], midpoint[1]+0.01)
         dead_peg = [peg for peg in self.peg_dir if peg.pos() > lower_bound and
                     peg.pos() < upper_bound][0]
-        dead_peg.goto(__class__._hades)
+        dead_peg.goto(__class__.HADES)
         self.peg_dir.remove(dead_peg)
         self.graveyard.append(dead_peg)
 

@@ -5,10 +5,10 @@ from operator import add
 class BaseGame:
     """Base class for all game classes."""
 
-    _original_board = {(0,0): 1, (2,0): 1, (4,0): 1, (6,0): 1, (8,0): 1,
+    _ORIGINAL_BOARD = {(0,0): 1, (2,0): 1, (4,0): 1, (6,0): 1, (8,0): 1,
                        (1,2): 1, (3,2): 1, (5,2): 1, (7,2): 1, (2,4): 1,
 		       (4,4): 1, (6,4): 1, (3,6): 1, (5,6): 1, (4,8): 0}
-    _possible_moves = {(0,0): ((4,0),(2,4)),
+    _POSSIBLE_MOVES = {(0,0): ((4,0),(2,4)),
                        (2,0): ((4,0),(2,4)),
                        (4,0): ((-4,0),(4,0),(2,4),(-2,4)),
                        (6,0): ((-4,0),(-2,4)),
@@ -28,7 +28,7 @@ class BaseGame:
     def __call__(self):
         """Call self as function."""
         self.started = True
-        self.board = self._original_board.copy()
+        self.board = self._ORIGINAL_BOARD.copy()
         self.peg_count = 14
         self.moves = []
 
@@ -68,7 +68,7 @@ class BaseGame:
         legal_moves = {}
         for peg in pegs:
             peg_moves = []
-            for move in self._possible_moves[peg]:
+            for move in self._POSSIBLE_MOVES[peg]:
                 if self._is_legal(peg, move):
                     peg_moves.append(move)
             if len(peg_moves):
@@ -93,7 +93,7 @@ class BaseGame:
 
     def restart(self):
         """Restarts the game."""
-        self.board = self._original_board.copy()
+        self.board = self._ORIGINAL_BOARD.copy()
         self.peg_count = 14
         self.moves.clear()
 
