@@ -278,7 +278,7 @@ class TurtleGraphics(BasicGUI):
         for peg in self.peg_dir:
             board_pos = __class__._subtract_offset(peg.pos())
             peg.possible_moves = legal_moves.get(board_pos, [])
-        if legal_moves and len(self.game.moves) >= 1:
+        if legal_moves and self.game.moves:
             self.best_move = self._find_best_move()
 
     def update_gui(self):
