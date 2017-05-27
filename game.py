@@ -28,7 +28,7 @@ class BaseGame:
     def __call__(self):
         """Call self as function."""
         self.started = True
-        self.board = self._ORIGINAL_BOARD.copy()
+        self.board = __class__._ORIGINAL_BOARD.copy()
         self.peg_count = 14
         self.moves = []
 
@@ -68,7 +68,7 @@ class BaseGame:
         legal_moves = {}
         for peg in pegs:
             peg_moves = []
-            for move in self._POSSIBLE_MOVES[peg]:
+            for move in __class__._POSSIBLE_MOVES[peg]:
                 if self._is_legal(peg, move):
                     peg_moves.append(move)
             if len(peg_moves):
@@ -93,7 +93,7 @@ class BaseGame:
 
     def restart(self):
         """Restarts the game."""
-        self.board = self._ORIGINAL_BOARD.copy()
+        self.board = __class__._ORIGINAL_BOARD.copy()
         self.peg_count = 14
         self.moves.clear()
 
