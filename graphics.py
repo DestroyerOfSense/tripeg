@@ -29,7 +29,8 @@ class Peg(RawPen):
         self.onrelease(self._place)
 
     def _remove(self, x, y):
-        """Removes peg from hole if it has moves."""
+        """Removes peg from hole if it has moves and its graphics object
+        permits it."""
         if self.possible_moves and self.moveable:
             self.goto(x,y)
 
@@ -273,7 +274,8 @@ class TurtleGraphics(BasicGUI):
         self.root.after(3000, self._delayed_callback, [arrow])
 
     def update_peg_moves(self):
-        """Updates move list for all pegs."""
+        """Updates move list for all pegs and updates best move, if
+        required."""
         legal_moves = self.game.find_legal_moves()
         for peg in self.peg_dir:
             board_pos = __class__._subtract_offset(peg.pos())
